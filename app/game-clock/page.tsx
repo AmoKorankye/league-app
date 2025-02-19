@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,7 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useGameContext } from "../contexts/GameContext"
 import Link from "next/link"
 
-export default function GameClock() {
+// Move your game clock logic into a separate component.
+function GameClockContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { gameState, setGameState } = useGameContext()
@@ -157,7 +158,9 @@ export default function GameClock() {
         <Alert className="mt-4">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Game End</AlertTitle>
-          <AlertDescription>The game has reached full time. Add extra time if needed or end the game.</AlertDescription>
+          <AlertDescription>
+            The game has reached full time. Add extra time if needed or end the game.
+          </AlertDescription>
           <Button className="mt-2" onClick={() => setShowAlert(false)}>
             Dismiss
           </Button>
@@ -167,3 +170,11 @@ export default function GameClock() {
   )
 }
 
+// Wrap the GameClockContent in a Suspense boundary to satisfy Next.js' requirement.
+export default function GameClock() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GameClockContent />
+    </Suspense>
+  )
+}
